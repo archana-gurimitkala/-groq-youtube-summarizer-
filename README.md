@@ -15,11 +15,11 @@ You know those 45-minute videos where you just need the main points? This tool w
 
 ## Features
 
-- 🌍 **12+ languages** - English, Hindi, Telugu, Spanish, French, and more
-- 📺 **Long videos? No problem** - Automatically breaks them into chunks
-- 🖼️ **Thumbnail preview** - See what you're summarizing
-- 📝 **Flexible length** - Short, Medium, or Detailed
-- 💾 **Download option** - Save as TXT file
+-  **12+ languages** - English, Hindi, Telugu, Spanish, French, and more
+-  **Long videos? No problem** - Automatically breaks them into chunks
+-  **Thumbnail preview** - See what you're summarizing
+-  **Flexible length** - Short, Medium, or Detailed
+-  **Download option** - Save as TXT file
 
 ## How I Built This
 
