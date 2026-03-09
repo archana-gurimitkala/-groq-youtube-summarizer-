@@ -1,71 +1,64 @@
-# YouTube Video Summarizer
+# YouTube Video Summarizer 🎬
 
-An AI-powered tool that summarizes YouTube videos in multiple languages. Just paste a URL and get a summary, key points, and timestamps.
+Too long to watch? Let AI do it for you.
+
+Paste a YouTube link → Get a summary, key points, and timestamps. Works in 12+ languages.
+
+## What It Does
+
+You know those 45-minute videos where you just need the main points? This tool watches them for you (kind of).
+
+- Paste any YouTube URL
+- Pick your language
+- Choose how detailed you want it
+- Get a clean summary in seconds
 
 ## Features
 
-- **Multi-language support** - English, Spanish, French, German, Hindi, Telugu, and more
-- **Works with long videos** - Automatically chunks and summarizes
-- **Video thumbnail preview** - Shows thumbnail when you paste URL
-- **Summary length options** - Short, Medium, or Detailed
-- **Download as TXT** - Save your summary locally
-- **Progress indicators** - See real-time processing status
+- 🌍 **12+ languages** - English, Hindi, Telugu, Spanish, French, and more
+- 📺 **Long videos? No problem** - Automatically breaks them into chunks
+- 🖼️ **Thumbnail preview** - See what you're summarizing
+- 📝 **Flexible length** - Short, Medium, or Detailed
+- 💾 **Download option** - Save as TXT file
 
-## How It Works
+## How I Built This
 
-1. **Paste YouTube URL** - Enter any YouTube video link
-2. **Select language** - Choose the transcript language
-3. **Choose length** - Short, Medium, or Detailed summary
-4. **Get results** - Summary, key points, and timestamps
+- **Groq API** - Super fast AI inference (Llama 3.1 8B)
+- **Gradio** - Simple web interface
+- **youtube-transcript-api** - Pulls captions from YouTube
+- **Python** - Glues everything together
 
-## Tech Stack
+## Try It Yourself
 
-- **Groq API** - Fast LLM inference (Llama 3.1 8B)
-- **Gradio** - Web interface
-- **youtube-transcript-api** - Fetch video captions
-- **Python** - Backend logic
-
-## Setup
-
-1. Clone the repo:
+1. Clone this repo:
 ```bash
-git clone https://github.com/archana-gurimitkala/youtube-video-summarizer.git
-cd youtube-video-summarizer
+git clone https://github.com/archana-gurimitkala/-groq-youtube-summarizer-.git
+cd -groq-youtube-summarizer-
 ```
 
-2. Install dependencies:
+2. Install stuff:
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Add your Groq API key:
-```bash
-cp .env.example .env
-# Edit .env and add your GROQ_API_KEY
+3. Get your free Groq API key from https://console.groq.com
+
+4. Create `.env` file:
+```
+GROQ_API_KEY=your-key-here
 ```
 
-4. Run the app:
+5. Run it:
 ```bash
 python app.py
 ```
 
-5. Open http://localhost:7861
-
-## Get Groq API Key
-
-1. Go to https://console.groq.com
-2. Sign up for free
-3. Create an API key
-4. Add it to your `.env` file
+6. Open http://localhost:7861 and start summarizing!
 
 ## Screenshots
 
-*Add your screenshots here*
-
-## License
-
-MIT
+*Coming soon*
 
 ---
 
-*Built with Groq and Gradio*
+*Built because I got tired of watching entire videos for 2 minutes of useful content* 😅
