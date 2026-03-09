@@ -57,7 +57,16 @@ python app.py
 
 ## Screenshots
 
-*Coming soon*
+![Screenshot 1](screenshots/YVS1.png)
+![Screenshot 2](screenshots/YVS2.png)
+![Screenshot 3](screenshots/YVS3.png)
+![Screenshot 4](screenshots/YVS4.png)
+![Screenshot 5](screenshots/YVS5.png)
+![Screenshot 6](screenshots/YVS6.png)
+![Screenshot 7](screenshots/YVS7.png)
+![Screenshot 8](screenshots/YVS8.png)
+![Screenshot 9](screenshots/YVS9.png)
+![Screenshot 10](screenshots/YVS10.png)
 
 ---
 
