@@ -1,8 +1,6 @@
 # YouTube Video Summarizer 🎬
 
-Too long to watch? Let AI do it for you.
-
-Paste a YouTube link → Get a summary, key points, and timestamps. Works in 12+ languages.
+I got tired of scrubbing through long YouTube videos just to find the two minutes that were actually relevant to me. So I built this — paste a URL, pick how detailed you want the summary, and it pulls the transcript and summarizes it almost instantly using Groq. It supports 12+ languages and handles long videos by chunking them automatically.
 
 ## What It Does
 
