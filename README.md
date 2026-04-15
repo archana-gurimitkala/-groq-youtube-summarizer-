@@ -1,12 +1,14 @@
 ---
-title: YouTube Video Summarizer
+title: Youtube Summarizer
 emoji: 🎬
 colorFrom: red
 colorTo: yellow
 sdk: gradio
-sdk_version: "5.29.1"
+sdk_version: 6.12.0
 app_file: app.py
 pinned: false
+license: mit
+short_description: YouTube video summarizer using Groq AI and LLaMA 3
 ---
 
 # YouTube Video Summarizer 🎬
