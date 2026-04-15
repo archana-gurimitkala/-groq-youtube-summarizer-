@@ -265,7 +265,7 @@ def chat_with_video(message, history, transcript):
             return history, ""
 
         api_messages = [
-            {"role": "system", "content": f"You are a helpful assistant. Answer questions based on this video transcript:\n\n{transcript[:8000]}"},
+            {"role": "system", "content": f"You are a helpful assistant. Answer questions based on this video transcript:\n\n{transcript[:3000]}"},
         ]
         for msg in history:
             api_messages.append({"role": msg["role"], "content": msg["content"]})
