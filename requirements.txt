@@ -2,5 +2,4 @@ groq
 gradio
 python-dotenv
 requests
-yt-dlp
 fpdf2
