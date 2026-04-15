@@ -184,10 +184,10 @@ def parse_result(result):
 
 
 def summarize_video(youtube_url, language, summary_length):
-    """Generator: yields (summary, key_points, timestamps, status, transcript)"""
+    """Generator: yields (summary, key_points, timestamps, status)"""
 
     if not youtube_url.strip():
-        yield "Please enter a YouTube URL", "", "", "", ""
+        yield "Please enter a YouTube URL", "", ""
         return
 
     length_settings = {
@@ -199,18 +199,18 @@ def summarize_video(youtube_url, language, summary_length):
 
     video_id = extract_video_id(youtube_url)
     if not video_id:
-        yield "Invalid YouTube URL", "", "", "", ""
+        yield "Invalid YouTube URL", "", ""
         return
 
-    yield "", "", "", "📋 Checking for captions...", ""
+    yield "", "", "", "📋 Checking for captions..."
     transcript = get_transcript_supadata(video_id, language)
 
     if transcript:
-        yield "", "", "", "✅ Captions found! Starting summarization...", ""
+        yield "", "", "", "✅ Captions found! Starting summarization..."
     else:
         yield (
             "⚠️ This video has no captions. Please upload the audio file below to transcribe it.",
-            "", "", "❌ No captions found", ""
+            "", "", "❌ No captions found"
         )
         return
 
@@ -219,13 +219,13 @@ def summarize_video(youtube_url, language, summary_length):
             chunks = chunk_transcript(transcript, chunk_size=3000)
             chunk_summaries = []
             for i, chunk in enumerate(chunks, 1):
-                yield "", "", "", f"🤖 Processing part {i} of {len(chunks)}...", ""
+                yield "", "", "", f"🤖 Processing part {i} of {len(chunks)}..."
                 chunk_summaries.append(summarize_chunk(chunk, i, len(chunks)))
 
-            yield "", "", "", "🔗 Combining all parts...", ""
+            yield "", "", "", "🔗 Combining all parts..."
             result = combine_summaries(chunk_summaries, settings)
         else:
-            yield "", "", "", "🤖 Summarizing with AI...", ""
+            yield "", "", "", "🤖 Summarizing with AI..."
             prompt = f"""Analyze this YouTube video transcript and provide:
 
 1. **SUMMARY** ({settings['paragraphs']} paragraphs)
@@ -247,45 +247,11 @@ TRANSCRIPT:
             result = response.choices[0].message.content
 
         summary, key_points, timestamps = parse_result(result)
-        yield summary, key_points, timestamps, "✅ Done!", transcript
+        yield summary, key_points, timestamps, "✅ Done!"
 
     except Exception as e:
-        yield f"Error: {str(e)}", "", "", "❌ Error occurred", ""
+        yield f"Error: {str(e)}", "", "", "❌ Error occurred"
 
-
-def chat_with_video(message, history, transcript):
-    try:
-        if not message.strip():
-            return history or [], ""
-
-        history = history or []
-
-        if not transcript:
-            history.append({"role": "assistant", "content": "Please summarize a video first, then I can answer questions about it!"})
-            return history, ""
-
-        api_messages = [
-            {"role": "system", "content": f"You are a helpful assistant. Answer questions based on this video transcript:\n\n{transcript[:3000]}"},
-        ]
-        for msg in history:
-            api_messages.append({"role": msg["role"], "content": msg["content"]})
-        api_messages.append({"role": "user", "content": message})
-
-        response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=api_messages,
-            temperature=0.5,
-            max_tokens=1000,
-        )
-        reply = response.choices[0].message.content
-        history.append({"role": "user", "content": message})
-        history.append({"role": "assistant", "content": reply})
-        return history, ""
-
-    except Exception as e:
-        history = history or []
-        history.append({"role": "assistant", "content": f"Error: {str(e)}"})
-        return history, ""
 
 
 def translate_summary(summary, key_points, target_language):
@@ -382,7 +348,7 @@ def create_pdf(summary, key_points, timestamps):
 def summarize_audio(audio_path, summary_length):
     """Transcribe uploaded audio and summarize."""
     if not audio_path:
-        yield "Please upload an audio file.", "", "", "❌ No file", ""
+        yield "Please upload an audio file.", "", "", "❌ No file"
         return
 
     length_settings = {
@@ -392,21 +358,21 @@ def summarize_audio(audio_path, summary_length):
     }
     settings = length_settings.get(summary_length, length_settings["Medium"])
 
-    yield "", "", "", "🎙️ Transcribing audio with Whisper...", ""
+    yield "", "", "", "🎙️ Transcribing audio with Whisper..."
     transcript, error = transcribe_audio_file(audio_path)
     if not transcript:
-        yield error, "", "", "❌ Transcription failed", ""
+        yield error, "", "", "❌ Transcription failed"
         return
 
-    yield "", "", "", "🤖 Summarizing...", ""
+    yield "", "", "", "🤖 Summarizing..."
     try:
         if len(transcript) > 4000:
             chunks = chunk_transcript(transcript, chunk_size=3000)
             chunk_summaries = []
             for i, chunk in enumerate(chunks, 1):
-                yield "", "", "", f"🤖 Processing part {i} of {len(chunks)}...", ""
+                yield "", "", "", f"🤖 Processing part {i} of {len(chunks)}..."
                 chunk_summaries.append(summarize_chunk(chunk, i, len(chunks)))
-            yield "", "", "", "🔗 Combining all parts...", ""
+            yield "", "", "", "🔗 Combining all parts..."
             result = combine_summaries(chunk_summaries, settings)
         else:
             prompt = f"""Analyze this video transcript and provide:
@@ -429,15 +395,14 @@ TRANSCRIPT:
             result = response.choices[0].message.content
 
         summary, key_points, timestamps = parse_result(result)
-        yield summary, key_points, timestamps, "✅ Done!", transcript
+        yield summary, key_points, timestamps, "✅ Done!"
     except Exception as e:
-        yield f"Error: {str(e)}", "", "", "❌ Error", ""
+        yield f"Error: {str(e)}", "", "", "❌ Error"
 
 
 # Gradio UI
 with gr.Blocks(title="YouTube Video Summarizer") as demo:
     gr.Markdown("# 🎬 YouTube Video Summarizer")
-    transcript_state = gr.State("")
 
     with gr.Row():
         with gr.Column(scale=3):
@@ -491,20 +456,13 @@ with gr.Blocks(title="YouTube Video Summarizer") as demo:
         download_txt_file = gr.File(label="TXT File", file_count="single")
         download_pdf_file = gr.File(label="PDF File", file_count="single")
 
-    # Chat
-    gr.Markdown("---\n### 💬 Chat with this Video")
-    chatbot = gr.Chatbot(label="Ask anything about the video", type="messages", height=350)
-    with gr.Row():
-        chat_input = gr.Textbox(label="Your question", placeholder="What is this video about?", scale=4)
-        chat_btn = gr.Button("Send", variant="primary", scale=1)
-
     # Events
     url_input.change(fn=show_thumbnail, inputs=url_input, outputs=thumbnail_output)
 
     submit_btn.click(
         fn=summarize_video,
         inputs=[url_input, language_input, length_input],
-        outputs=[summary_output, keypoints_output, timestamps_output, status_output, transcript_state],
+        outputs=[summary_output, keypoints_output, timestamps_output, status_output],
     )
 
     translate_btn.click(
@@ -516,14 +474,12 @@ with gr.Blocks(title="YouTube Video Summarizer") as demo:
     audio_btn.click(
         fn=summarize_audio,
         inputs=[audio_upload, length_input],
-        outputs=[summary_output, keypoints_output, timestamps_output, status_output, transcript_state],
+        outputs=[summary_output, keypoints_output, timestamps_output, status_output],
     )
 
     download_txt_btn.click(fn=create_txt, inputs=[summary_output, keypoints_output, timestamps_output], outputs=download_txt_file)
     download_pdf_btn.click(fn=create_pdf, inputs=[summary_output, keypoints_output, timestamps_output], outputs=download_pdf_file)
 
-    chat_btn.click(fn=chat_with_video, inputs=[chat_input, chatbot, transcript_state], outputs=[chatbot, chat_input])
-    chat_input.submit(fn=chat_with_video, inputs=[chat_input, chatbot, transcript_state], outputs=[chatbot, chat_input])
 
 
 if __name__ == "__main__":
