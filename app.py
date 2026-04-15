@@ -75,35 +75,6 @@ def get_transcript_supadata(video_id, language="auto"):
         return None
 
 
-def transcribe_audio_file(audio_path):
-    """Transcribe an audio file using Groq Whisper."""
-    try:
-        file_size_mb = os.path.getsize(audio_path) / (1024 * 1024)
-        if file_size_mb > 24:
-            return None, "Audio file too large (max 25MB). Try a shorter clip."
-
-        with open(audio_path, "rb") as audio_file:
-            transcription = client.audio.transcriptions.create(
-                file=(os.path.basename(audio_path), audio_file),
-                model="whisper-large-v3",
-                response_format="verbose_json",
-            )
-
-        full_transcript = ""
-        if hasattr(transcription, "segments") and transcription.segments:
-            for seg in transcription.segments:
-                start = int(seg.get("start", 0))
-                minutes = start // 60
-                seconds = start % 60
-                text = seg.get("text", "").strip()
-                full_transcript += f"[{minutes:02d}:{seconds:02d}] {text}\n"
-        else:
-            full_transcript = transcription.text
-
-        return full_transcript, None
-    except Exception as e:
-        return None, f"Transcription error: {str(e)}"
-
 
 def chunk_transcript(transcript, chunk_size=3000):
     chunks = []
@@ -208,10 +179,7 @@ def summarize_video(youtube_url, language, summary_length):
     if transcript:
         yield "", "", "", "✅ Captions found! Starting summarization..."
     else:
-        yield (
-            "⚠️ This video has no captions. Please upload the audio file below to transcribe it.",
-            "", "", "❌ No captions found"
-        )
+        yield "⚠️ No captions available for this video. Please try a video that has subtitles.", "", "", "❌ No captions found"
         return
 
     try:
@@ -345,60 +313,6 @@ def create_pdf(summary, key_points, timestamps):
     return filepath
 
 
-def summarize_audio(audio_path, summary_length):
-    """Transcribe uploaded audio and summarize."""
-    if not audio_path:
-        yield "Please upload an audio file.", "", "", "❌ No file"
-        return
-
-    length_settings = {
-        "Short": {"paragraphs": "1", "points": "3-4", "timestamps": "3", "max_tokens": 800},
-        "Medium": {"paragraphs": "2-3", "points": "5-7", "timestamps": "5", "max_tokens": 1500},
-        "Detailed": {"paragraphs": "4-5", "points": "8-10", "timestamps": "8-10", "max_tokens": 2500},
-    }
-    settings = length_settings.get(summary_length, length_settings["Medium"])
-
-    yield "", "", "", "🎙️ Transcribing audio with Whisper..."
-    transcript, error = transcribe_audio_file(audio_path)
-    if not transcript:
-        yield error, "", "", "❌ Transcription failed"
-        return
-
-    yield "", "", "", "🤖 Summarizing..."
-    try:
-        if len(transcript) > 4000:
-            chunks = chunk_transcript(transcript, chunk_size=3000)
-            chunk_summaries = []
-            for i, chunk in enumerate(chunks, 1):
-                yield "", "", "", f"🤖 Processing part {i} of {len(chunks)}..."
-                chunk_summaries.append(summarize_chunk(chunk, i, len(chunks)))
-            yield "", "", "", "🔗 Combining all parts..."
-            result = combine_summaries(chunk_summaries, settings)
-        else:
-            prompt = f"""Analyze this video transcript and provide:
-
-1. **SUMMARY** ({settings['paragraphs']} paragraphs)
-2. **KEY POINTS** ({settings['points']} bullet points)
-3. **TIMESTAMPS** ({settings['timestamps']} important moments with [MM:SS] format)
-
-TRANSCRIPT:
-{transcript}"""
-            response = client.chat.completions.create(
-                model="llama-3.1-8b-instant",
-                messages=[
-                    {"role": "system", "content": "You are an expert video content analyzer."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.3,
-                max_tokens=settings['max_tokens'],
-            )
-            result = response.choices[0].message.content
-
-        summary, key_points, timestamps = parse_result(result)
-        yield summary, key_points, timestamps, "✅ Done!"
-    except Exception as e:
-        yield f"Error: {str(e)}", "", "", "❌ Error"
-
 
 # Gradio UI
 with gr.Blocks(title="YouTube Video Summarizer") as demo:
@@ -420,12 +334,6 @@ with gr.Blocks(title="YouTube Video Summarizer") as demo:
             thumbnail_output = gr.HTML()
 
     status_output = gr.Markdown("")
-
-    # Audio upload fallback
-    with gr.Accordion("🎵 No captions? Upload audio file instead", open=False):
-        gr.Markdown("If the video has no captions, download the audio manually and upload it here for transcription.")
-        audio_upload = gr.Audio(label="Upload Audio (MP3/WAV/M4A, max 25MB)", type="filepath")
-        audio_btn = gr.Button("🎙️ Transcribe & Summarize Audio", variant="secondary")
 
     with gr.Row():
         summary_output = gr.Textbox(label="📝 Summary", lines=6, interactive=False)
@@ -469,12 +377,6 @@ with gr.Blocks(title="YouTube Video Summarizer") as demo:
         fn=translate_summary,
         inputs=[summary_output, keypoints_output, translate_lang],
         outputs=translated_output,
-    )
-
-    audio_btn.click(
-        fn=summarize_audio,
-        inputs=[audio_upload, length_input],
-        outputs=[summary_output, keypoints_output, timestamps_output, status_output],
     )
 
     download_txt_btn.click(fn=create_txt, inputs=[summary_output, keypoints_output, timestamps_output], outputs=download_txt_file)
