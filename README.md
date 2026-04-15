@@ -13,9 +13,7 @@ short_description: YouTube video summarizer using Groq AI and LLaMA 3
 
 # YouTube Video Summarizer 🎬
 
-Too long to watch? Let AI do it for you.
-
-Paste a YouTube link → Get a summary, key points, and timestamps. Works in 12+ languages.
+I got tired of scrubbing through long YouTube videos just to find the two minutes that were actually relevant to me. So I built this — paste a URL, pick how detailed you want the summary, and it pulls the transcript and summarizes it almost instantly using Groq. It supports 12+ languages and handles long videos by chunking them automatically.
 
 ## What It Does
 
@@ -28,11 +26,11 @@ You know those 45-minute videos where you just need the main points? This tool w
 
 ## Features
 
-- 🌍 **12+ languages** - English, Hindi, Telugu, Spanish, French, and more
-- 📺 **Long videos? No problem** - Automatically breaks them into chunks
-- 🖼️ **Thumbnail preview** - See what you're summarizing
-- 📝 **Flexible length** - Short, Medium, or Detailed
-- 💾 **Download option** - Save as TXT file
+-  **12+ languages** - English, Hindi, Telugu, Spanish, French, and more
+-  **Long videos? No problem** - Automatically breaks them into chunks
+-  **Thumbnail preview** - See what you're summarizing
+-  **Flexible length** - Short, Medium, or Detailed
+-  **Download option** - Save as TXT file
 
 ## How I Built This
 
