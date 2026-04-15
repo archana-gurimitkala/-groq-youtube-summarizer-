@@ -1,3 +1,14 @@
+---
+title: YouTube Video Summarizer
+emoji: 🎬
+colorFrom: red
+colorTo: yellow
+sdk: gradio
+sdk_version: "5.29.1"
+app_file: app.py
+pinned: false
+---
+
 # YouTube Video Summarizer 🎬
 
 Too long to watch? Let AI do it for you.
