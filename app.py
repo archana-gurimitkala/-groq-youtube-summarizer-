@@ -276,33 +276,46 @@ TRANSCRIPT:
 
 
 def chat_with_video(message, history, transcript):
-    if not message.strip():
-        return history or [], ""
+    try:
+        if not message.strip():
+            return history or [], ""
 
-    if not transcript:
         history = history or []
-        history.append((message, "Please summarize a video first, then I can answer questions about it!"))
+
+        if not transcript:
+            history.append((message, "Please summarize a video first, then I can answer questions about it!"))
+            return history, ""
+
+        messages = [
+            {"role": "system", "content": f"You are a helpful assistant. Answer questions based on this video transcript:\n\n{transcript[:8000]}"},
+        ]
+
+        for item in history:
+            if isinstance(item, dict):
+                messages.append({"role": item["role"], "content": item["content"]})
+            else:
+                human, assistant = item
+                if human:
+                    messages.append({"role": "user", "content": human})
+                if assistant:
+                    messages.append({"role": "assistant", "content": assistant})
+
+        messages.append({"role": "user", "content": message})
+
+        response = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=messages,
+            temperature=0.5,
+            max_tokens=1000,
+        )
+        reply = response.choices[0].message.content
+        history.append((message, reply))
         return history, ""
 
-    messages = [
-        {"role": "system", "content": f"You are a helpful assistant. Answer questions based on this video transcript:\n\n{transcript[:8000]}"},
-    ]
-    for human, assistant in (history or []):
-        messages.append({"role": "user", "content": human})
-        if assistant:
-            messages.append({"role": "assistant", "content": assistant})
-    messages.append({"role": "user", "content": message})
-
-    response = client.chat.completions.create(
-        model="llama-3.1-8b-instant",
-        messages=messages,
-        temperature=0.5,
-        max_tokens=1000,
-    )
-    reply = response.choices[0].message.content
-    history = history or []
-    history.append((message, reply))
-    return history, ""
+    except Exception as e:
+        history = history or []
+        history.append((message, f"Error: {str(e)}"))
+        return history, ""
 
 
 def translate_summary(summary, key_points, target_language):
