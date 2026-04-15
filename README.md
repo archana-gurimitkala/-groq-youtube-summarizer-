@@ -79,6 +79,8 @@ python app.py
 
 ## Screenshots
 
+> **Note:** These screenshots show the original version. The latest version includes **Translate Summary** and **PDF/TXT export** features — try them live on [Hugging Face Spaces](https://huggingface.co/spaces/Archanacreates/youtube-summarizer)!
+
 ![Screenshot 1](screenshots/YVS1.png)
 ![Screenshot 2](screenshots/YVS2.png)
 ![Screenshot 3](screenshots/YVS3.png)
