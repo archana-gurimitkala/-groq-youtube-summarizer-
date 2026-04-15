@@ -1,5 +1,5 @@
 groq
-gradio==4.44.1
+gradio==5.25.0
 python-dotenv
 requests
 fpdf2
