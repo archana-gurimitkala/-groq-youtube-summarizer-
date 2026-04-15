@@ -29,12 +29,12 @@ You know those 45-minute videos where you just need the main points? This tool w
 
 ## Features
 
-- 🌍 **12+ languages** - English, Hindi, Telugu, Spanish, French, and more
-- 📺 **Long videos? No problem** - Automatically breaks them into chunks
-- 🖼️ **Thumbnail preview** - See what you're summarizing
-- 📝 **Flexible length** - Short, Medium, or Detailed
-- 🌐 **Translate summary** - Translate to Telugu, Hindi, Spanish, and 10+ languages
-- 💾 **Export** - Download as TXT or PDF
+- **12+ languages** - English, Hindi, Telugu, Spanish, French, and more
+- **Long videos? No problem** - Automatically breaks them into chunks
+- **Thumbnail preview** - See what you're summarizing
+- **Flexible length** - Short, Medium, or Detailed
+- **Translate summary** - Translate to Telugu, Hindi, Spanish, and 10+ languages
+- **Export** - Download as TXT or PDF
 
 ## How I Built This
 
