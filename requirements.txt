@@ -1,5 +1,4 @@
 groq
-gradio
 python-dotenv
 requests
 fpdf2

@@ -261,38 +261,30 @@ def chat_with_video(message, history, transcript):
         history = history or []
 
         if not transcript:
-            history.append((message, "Please summarize a video first, then I can answer questions about it!"))
+            history.append({"role": "assistant", "content": "Please summarize a video first, then I can answer questions about it!"})
             return history, ""
 
-        messages = [
+        api_messages = [
             {"role": "system", "content": f"You are a helpful assistant. Answer questions based on this video transcript:\n\n{transcript[:8000]}"},
         ]
-
-        for item in history:
-            if isinstance(item, dict):
-                messages.append({"role": item["role"], "content": item["content"]})
-            else:
-                human, assistant = item
-                if human:
-                    messages.append({"role": "user", "content": human})
-                if assistant:
-                    messages.append({"role": "assistant", "content": assistant})
-
-        messages.append({"role": "user", "content": message})
+        for msg in history:
+            api_messages.append({"role": msg["role"], "content": msg["content"]})
+        api_messages.append({"role": "user", "content": message})
 
         response = client.chat.completions.create(
             model="llama-3.1-8b-instant",
-            messages=messages,
+            messages=api_messages,
             temperature=0.5,
             max_tokens=1000,
         )
         reply = response.choices[0].message.content
-        history.append((message, reply))
+        history.append({"role": "user", "content": message})
+        history.append({"role": "assistant", "content": reply})
         return history, ""
 
     except Exception as e:
         history = history or []
-        history.append((message, f"Error: {str(e)}"))
+        history.append({"role": "assistant", "content": f"Error: {str(e)}"})
         return history, ""
 
 
@@ -501,7 +493,7 @@ with gr.Blocks(title="YouTube Video Summarizer") as demo:
 
     # Chat
     gr.Markdown("---\n### 💬 Chat with this Video")
-    chatbot = gr.Chatbot(label="Ask anything about the video", height=350)
+    chatbot = gr.Chatbot(label="Ask anything about the video", type="messages", height=350)
     with gr.Row():
         chat_input = gr.Textbox(label="Your question", placeholder="What is this video about?", scale=4)
         chat_btn = gr.Button("Send", variant="primary", scale=1)
