@@ -1,4 +1,6 @@
 groq
 gradio
 python-dotenv
-youtube-transcript-api
+requests
+yt-dlp
+fpdf2
