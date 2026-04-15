@@ -281,14 +281,16 @@ def chat_with_video(message, history, transcript):
 
     if not transcript:
         history = history or []
-        history.append({"role": "assistant", "content": "Please summarize a video first, then I can answer questions about it!"})
+        history.append((message, "Please summarize a video first, then I can answer questions about it!"))
         return history, ""
 
     messages = [
         {"role": "system", "content": f"You are a helpful assistant. Answer questions based on this video transcript:\n\n{transcript[:8000]}"},
     ]
-    for msg in (history or []):
-        messages.append({"role": msg["role"], "content": msg["content"]})
+    for human, assistant in (history or []):
+        messages.append({"role": "user", "content": human})
+        if assistant:
+            messages.append({"role": "assistant", "content": assistant})
     messages.append({"role": "user", "content": message})
 
     response = client.chat.completions.create(
@@ -299,8 +301,7 @@ def chat_with_video(message, history, transcript):
     )
     reply = response.choices[0].message.content
     history = history or []
-    history.append({"role": "user", "content": message})
-    history.append({"role": "assistant", "content": reply})
+    history.append((message, reply))
     return history, ""
 
 
@@ -396,7 +397,7 @@ def create_pdf(summary, key_points, timestamps):
 
 
 # Gradio UI
-with gr.Blocks(title="YouTube Video Summarizer", theme=gr.themes.Soft()) as demo:
+with gr.Blocks(title="YouTube Video Summarizer") as demo:
     gr.Markdown("# 🎬 YouTube Video Summarizer")
     transcript_state = gr.State("")
 
@@ -448,7 +449,7 @@ with gr.Blocks(title="YouTube Video Summarizer", theme=gr.themes.Soft()) as demo
 
     # Chat
     gr.Markdown("---\n### 💬 Chat with this Video")
-    chatbot = gr.Chatbot(label="Ask anything about the video", type="messages", height=350)
+    chatbot = gr.Chatbot(label="Ask anything about the video", height=350)
     with gr.Row():
         chat_input = gr.Textbox(label="Your question", placeholder="What is this video about?", scale=4)
         chat_btn = gr.Button("Send", variant="primary", scale=1)
@@ -477,4 +478,4 @@ with gr.Blocks(title="YouTube Video Summarizer", theme=gr.themes.Soft()) as demo
 
 if __name__ == "__main__":
     print("Starting YouTube Video Summarizer...")
-    demo.launch(server_port=7860)
+    demo.launch(server_port=7860, theme=gr.themes.Soft())
