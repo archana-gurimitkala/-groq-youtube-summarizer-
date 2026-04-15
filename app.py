@@ -478,4 +478,4 @@ with gr.Blocks(title="YouTube Video Summarizer") as demo:
 
 if __name__ == "__main__":
     print("Starting YouTube Video Summarizer...")
-    demo.launch(server_port=7860, theme=gr.themes.Soft())
+    demo.launch()
