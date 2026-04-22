@@ -117,6 +117,7 @@ KEY POINTS:
 def combine_summaries(chunk_summaries, settings):
     combined = "\n\n".join(chunk_summaries)
     prompt = f"""Combine these partial summaries into one cohesive summary.
+Use gender-neutral language (they/them) for speakers unless gender is explicitly mentioned.
 
 PARTIAL SUMMARIES:
 {combined}
@@ -206,7 +207,7 @@ TRANSCRIPT:
             response = client.chat.completions.create(
                 model="llama-3.1-8b-instant",
                 messages=[
-                    {"role": "system", "content": "You are an expert video content analyzer."},
+                    {"role": "system", "content": "You are an expert video content analyzer. Always use gender-neutral language (they/them) when referring to speakers unless the transcript explicitly states their gender."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.3,
